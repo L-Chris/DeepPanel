@@ -1,0 +1,20 @@
+{
+  "name": "deeppanel-api-test",
+  "version": "1.0.0",
+  "description": "测试 DeepPanel API 的工具",
+  "main": "test_api.js",
+  "scripts": {
+    "test": "node test/api.js ./data/3.jpg"
+  },
+  "keywords": [
+    "api",
+    "test",
+    "deeppanel"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "axios": "^1.6.5",
+    "form-data": "^4.0.0"
+  }
+} 
