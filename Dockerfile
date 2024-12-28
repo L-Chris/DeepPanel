@@ -15,26 +15,28 @@ RUN rm -rf /etc/apt/sources.list.d/* && \
 # 安装系统依赖
 RUN apt-get update && apt-get install -y \
     graphviz \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # 配置pip
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple \
-    && pip config set install.trusted-host pypi.tuna.tsinghua.edu.cn \
-    && pip install --no-cache-dir pipenv
+    && pip config set install.trusted-host pypi.tuna.tsinghua.edu.cn
 
 # 复制项目文件
-COPY Pipfile Pipfile.lock ./
+COPY requirements.txt ./
 COPY *.py ./
 COPY dataset/ ./dataset/
 COPY templates/ ./templates/
+COPY api/ ./api/
 
-# 使用requirements.txt方式安装依赖
-RUN pip install --no-cache-dir pip==20.1.1 && \
-    pipenv requirements | grep -v "sys_platform == 'darwin'" > requirements.txt && \
-    pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --timeout 600
+# 安装项目依赖
+RUN pip install -r requirements.txt --timeout 600
 
 # 设置环境变量
 ENV PYTHONUNBUFFERED=1
 
-# 设置默认命令
-CMD ["python", "DeepPanelTest.py"]
+# 暴露端口
+EXPOSE 5000
+
+# 修改默认命令为启动 Web 服务
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "api.app:app"]
