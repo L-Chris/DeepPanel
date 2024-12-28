@@ -28,6 +28,7 @@ COPY *.py ./
 COPY dataset/ ./dataset/
 COPY templates/ ./templates/
 COPY api/ ./api/
+COPY model/ ./model/
 
 # 安装项目依赖
 RUN pip install -r requirements.txt --timeout 600
@@ -37,6 +38,9 @@ ENV PYTHONUNBUFFERED=1
 
 # 暴露端口
 EXPOSE 5000
+
+# 先训练模型
+RUN python DeepPanel.py
 
 # 修改默认命令为启动 Web 服务
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "api.app:app"]
